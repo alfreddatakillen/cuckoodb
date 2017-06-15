@@ -77,4 +77,9 @@ This probably means that you have changed encryption key. Data on AWS S3 is
 stored using one encryption key, but when decrypted with another key, the data
 is not valid JSON anymore.
 
+TODO/Road map/Wish list
+-----------------------
 
+* Some caching to avoid getting data from AWS S3 too often.
+  A couple of seconds as default cache timeout?
+ 
