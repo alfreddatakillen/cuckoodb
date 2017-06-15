@@ -10,7 +10,7 @@ Features
 * All data is encrypted before sent to AWS S3.
 * Can store any value that can be stringified with JSON.
 * Promise interface.
-* No locking, no concurrency control, nothing fancy. Don't use this when you
+* No concurrency control, nothing fancy. Don't use this when you
   have multiple processes writing critical data simultaneously. Also,
   performance is horrible for large data sets. This was built for storing
   configurations (i.e. small datasets that does not update very often).
@@ -19,7 +19,7 @@ Usage
 -----
 
 ```
-const CuckooDb = require('./index');
+const CuckooDb = require('cuckoodb');
 const cuckoodb = new CuckooDb(bucket, s3Key, cryptoKey);
 
 // ----------------------
