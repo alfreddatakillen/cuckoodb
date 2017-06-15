@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "aws-sdk": "2.69.0",
-    "bluebird": "3.5.0"
+    "bluebird": "3.5.0",
+    "promise-mutex": "0.1.1"
   }
 }

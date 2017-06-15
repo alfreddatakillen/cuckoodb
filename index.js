@@ -1,4 +1,6 @@
 const Promise = require('bluebird');
+const Mutex = require('promise-mutex');
+const mutex = new Mutex();
 
 const AWS = require('aws-sdk');
 AWS.config.setPromisesDependency(Promise);
@@ -41,7 +43,7 @@ function store(data, bucket, key, cryptokey) {
 	.then(data => s3.putObject({ Bucket: bucket, Key: key, Body: data }).promise())
 	.then(data => {
 		console.log('Stored:', data);
-	})
+	});
 }
 
 class CuckooDb {
@@ -53,27 +55,33 @@ class CuckooDb {
 	}
 
 	get(key) {
-		return fetch(this.bucket, this.key, this.cryptokey)
-		.then(data => {
-			return data[key];
-		})
+		return mutex.lock(() => {
+			return fetch(this.bucket, this.key, this.cryptokey)
+			.then(data => {
+				return data[key];
+			})
+		});
 	}
 
 	keys() {
-		return fetch(this.bucket, this.key, this.cryptokey)
-		.then(data => {
-			return Object.keys(data);
-		})
+		return mutex.lock(() => {
+			return fetch(this.bucket, this.key, this.cryptokey)
+			.then(data => {
+				return Object.keys(data);
+			})
+		});
 	}
 
 	set(key, value) {
-		return fetch(this.bucket, this.key, this.cryptokey)
-		.then(data => {
-			if (JSON.stringify(data[key]) !== JSON.stringify(value)) {
-				data[key] = value;
-				return store(data, this.bucket, this.key, this.cryptokey);
-			}
-		})
+		return mutex.lock(() => {
+			return fetch(this.bucket, this.key, this.cryptokey)
+			.then(data => {
+				if (JSON.stringify(data[key]) !== JSON.stringify(value)) {
+					data[key] = value;
+					return store(data, this.bucket, this.key, this.cryptokey);
+				}
+			})
+		});
 	}
 
 }
